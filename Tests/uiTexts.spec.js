@@ -25,12 +25,11 @@ test.describe('ui text checks @UI:', () => {
     '': 'WebsiteMtee',
     'web-translate': 'WebsiteMtee',
     'about': 'WebsiteMtee',
-    'privacy': 'WebsiteMtee',
-    'terms': 'WebsiteMtee'
+    'data-protection-conditions':'WebsiteMtee'   
   }
 
   for (const title in pageTitles) {
-    test(`page (${title}) has set Title `, async ({ page, baseURL }) => {
+    test.only(`page (${title}) has set Title `, async ({ page, baseURL }) => {
       let pageTitle = pageTitles[title];
       await page.goto(baseURL + title);
       await expect(page).toHaveTitle(pageTitle);
