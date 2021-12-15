@@ -1,0 +1,19 @@
+{
+  "name": "eemt-e2e-tests",
+  "version": "1.0.0",
+  "description": "e2e playwright tests",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test --config=playwright.config.js" 
+  },
+  "author": "Berta Bernane",
+  "license": "ISC",
+  "dependencies": {
+    "@playwright/test": "^1.17.0",
+    "cheerio": "^1.0.0-rc.10",
+    "fs": "0.0.1-security"
+  },
+  "devDependencies": {
+    "playwright": "^1.17.0"
+  }
+}

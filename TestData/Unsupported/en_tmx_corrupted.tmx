@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<tmx version="1.4">
+<header creationdate="Sun Oct 23 01:41:31 2021"
+          srclang="en"
+          adminlang="en"
+          o-tmf="unknown"
+          segtype="sentence"
+          creationtool="Uplug"
+          creationtoolversion="unknown"
+          datatype="PlainText" />
+  <body>
+    <tu>
+      <tuv xml:lang="en"><seg>PROVISIONS RELATING TO THE ACT OF ACCESSION OF 16 APRIL 2003  </seg><tuv>      
+    </tu>
+    <tu>
+      <tuv xml:lang="en"><seg>TITLE I  </seg><tuv>     
+    </tu>
+    <tu>
+      <tuv xml:lang="en"><seg>PRINCIPLES  </seg><tuv>   
+    </tu>
+    <tu>
+      <tuv xml:lang="en"><seg>For the purposes of this Protocol:  </seg><tuv>     
+    </tu>
+  </body>
+</tmx>

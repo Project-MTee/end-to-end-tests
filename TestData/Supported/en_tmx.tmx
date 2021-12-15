@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<tmx version="1.4">
+<header creationdate="Sun Oct 23 01:41:31 2021"
+          srclang="en"
+          adminlang="en"
+          o-tmf="unknown"
+          segtype="sentence"        
+          datatype="PlainText" />
+  <body>
+    <tu>
+      <tuv xml:lang="en"><seg>This is a tmx file</seg></tuv>      
+    </tu>
+    <tu>
+      <tuv xml:lang="en"><seg>Translations should be appended to this file not replace the original text</seg></tuv>     
+    </tu> 
+  </body>
+</tmx>
