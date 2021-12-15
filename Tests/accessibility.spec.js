@@ -9,13 +9,26 @@ const { MTLanguageSelector } = require('../Pages/mtLanguageSelector');
 
 test.describe('accessibility checks @UI:', () => {
 
-  test.beforeEach(async ({ page, baseURL, textAPI, fileAPI, speechAPI, grammarAPI }) => {
+  let translationParameters =
+  {
+    srcLang: 'English',
+    trgLang: 'Estonian',
+    srcLangCode: 'en',
+    trgLangCode: 'et',
+    domainToSet: 'general',
+    domainToExpect: 'general',
+    filePath: '',
+    textTranslationTimeout:0
+  }
+
+  test.beforeEach(async ({ page, baseURL, textAPI, fileAPI, speechAPI, grammarAPI, textTranslationTimeout }) => {
     process.env.URL = baseURL;
     process.env.textAPI = textAPI;
     process.env.fileAPI = fileAPI;
     process.env.speechAPI = speechAPI;
     process.env.grammarAPI = grammarAPI;
     translatePage = new TranslatePage(page);
+    translationParameters.textTranslationTimeout=textTranslationTimeout;
     await translatePage.navigate();
     header = new Header(page);
     await header.changeUILanguage('EN');
@@ -64,16 +77,7 @@ test.describe('accessibility checks @UI:', () => {
     });
   }
 
-  let translationParameters =
-  {
-    srcLang: 'English',
-    trgLang: 'Estonian',
-    srcLangCode: 'en',
-    trgLangCode: 'et',
-    domainToSet: 'general',
-    domainToExpect: 'general',
-    filePath: ''
-  }
+  
 
   test("translates text @keyboard", async ({ page, baseURL }) => {
     let srcText = 'translate me';
@@ -81,7 +85,7 @@ test.describe('accessibility checks @UI:', () => {
     await translatePage.mtLanguageSelector.selectLanguageDirectionWithKeyboard(translationParameters.srcLang, translationParameters.trgLang);
     await translatePage.mtLanguageSelector.selectDomainWithKeyboard(translationParameters.domainToSet);
     await translatePage.translationForm.srcTextInput.type(srcText);
-    let translations = await translatePage.translationForm.translateTextWithKeyboard([srcText], translationParameters, 10000)
+    let translations = await translatePage.translationForm.translateTextWithKeyboard([srcText], translationParameters)
     Promise.all(translations.map(async (response) => {
       await translatePage.translationForm.checkTranslationResponse(response, translationParameters);
     }));
@@ -95,7 +99,7 @@ test.describe('accessibility checks @UI:', () => {
     await translatePage.mtLanguageSelector.selectLanguageDirectionWithKeyboard(translationParameters.srcLang, translationParameters.trgLang);
     await translatePage.mtLanguageSelector.selectDomainWithKeyboard(translationParameters.domainToSet);
     await translatePage.translationForm.srcTextInput.type(srcText);
-    let translations = await translatePage.translationForm.translateTextWithKeyboard([srcText], translationParameters, 10000);
+    let translations = await translatePage.translationForm.translateTextWithKeyboard([srcText], translationParameters);
     await translatePage.translationForm.clearTranslateFieldsWithKeyboard();
     await expect(translatePage.translationForm.srcTextInput).toBeFocused(); //check focus returns back to previous element
   });
@@ -107,7 +111,7 @@ test.describe('accessibility checks @UI:', () => {
     await translatePage.mtLanguageSelector.selectLanguageDirectionWithKeyboard(translationParameters.srcLang, translationParameters.trgLang);
     await translatePage.mtLanguageSelector.selectDomainWithKeyboard(translationParameters.domainToSet);
     await translatePage.translationForm.srcTextInput.type(srcText);
-    let translations = await translatePage.translationForm.translateTextWithKeyboard([srcText], translationParameters, 10000);
+    let translations = await translatePage.translationForm.translateTextWithKeyboard([srcText], translationParameters);
     await translatePage.translationForm.copyTranslationWithKeyboard();
     await translatePage.translationForm.closeDisplayedMessageWithKeyboard();
     await expect(translatePage.translationForm.copyButton).toBeFocused(); //check focus returns back to previous element

@@ -472,14 +472,14 @@ async checkSrcInputFieldText(textToContain, textToNotContain)
 }
 
 //KEYBOARD 
-async translateTextWithKeyboard(srcTextArray, translationParameters, translationTime=10000)
+async translateTextWithKeyboard(srcTextArray, translationParameters)
 {	
   await this.translateButton.focus();
   await expect(this.translateButton).toBeFocused();
   await this.page.keyboard.press('Enter');
   // wait for translations, check response status, check request data
   let translations = await Promise.all(srcTextArray.map(async (txt) => {
-        let response = await this.waitForMTResponse(txt,translationTime);
+        let response = await this.waitForMTResponse(txt,translationParameters.textTranslationTimeout);
         await this.checkTranslationRequest(await response.request(), txt, translationParameters);    
         return response;
   }));  

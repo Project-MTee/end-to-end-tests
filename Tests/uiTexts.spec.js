@@ -29,7 +29,7 @@ test.describe('ui text checks @UI:', () => {
   }
 
   for (const title in pageTitles) {
-    test.only(`page (${title}) has set Title `, async ({ page, baseURL }) => {
+    test(`page (${title}) has set Title `, async ({ page, baseURL }) => {
       let pageTitle = pageTitles[title];
       await page.goto(baseURL + title);
       await expect(page).toHaveTitle(pageTitle);
@@ -52,7 +52,7 @@ test.describe('ui text checks @UI:', () => {
   for (const languageCode of uiLanguages) {
     test(`data protection text matches expected ${languageCode}`, async ({ page, baseURL }) => {
       header = new Header(page);
-      await page.goto('https://mt.cs.ut.ee/data-protection-conditions');
+      await page.goto(baseURL+'data-protection-conditions');
       header = new Header(page);
       await header.openUILanguageMenuWithKeyboard();
       await header.chageUILanguageWithKeyboard(languageCode);
