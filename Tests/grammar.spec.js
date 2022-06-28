@@ -48,7 +48,7 @@ test.describe('grammar check @grammar:', () => {
       Promise.all(gramCheckResponses.map(async (response) => {
         await translatePage.translationForm.checkGrammarResponse(response);
       }));
-      await translatePage.translationForm.checkUnderlinedPhrases(gramCheckResponses,10000); //check underlined text and computed css style
+      await translatePage.translationForm.checkUnderlinedPhrases(gramCheckResponses,20000); //check underlined text and computed css style
     });
   }
 
