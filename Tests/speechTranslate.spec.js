@@ -56,7 +56,7 @@ test.describe('speech translate @speech:', () => {
     await translatePage.translationForm.checkTranslationFormInDefaultState();
   });
 
-  test.only("displays record button only for ET lang @smoke", async ({ page, baseURL }) => {
+  test("displays record button only for ET lang @smoke", async ({ page, baseURL }) => {
     translatePage = new TranslatePage(page);
     await translatePage.mtLanguageSelector.selectLanguageDirection('Estonian', 'English');
     await expect(translatePage.speechRecording.recordButton, 'Record button should be visible for Estonian-English').toBeVisible({ timeout: 2000 });
