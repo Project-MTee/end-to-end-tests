@@ -291,8 +291,7 @@ async checkDocumentTranslationResponse(response, translationParameters)
     {
      await expect(responseData).toEqual(expect.objectContaining({
           createdAt: expect.any(String),
-          domain: expect.stringMatching(translationParameters.domainToExpect),
-          fileName: translationParameters.filePath.split('/').pop(),
+          domain: expect.stringMatching(translationParameters.domainToExpect),         
           files: expect.arrayContaining([
                     expect.objectContaining({
                           id: expect.any(String),
@@ -314,7 +313,6 @@ async checkDocumentTranslationResponse(response, translationParameters)
   {
    await expect(responseData).toEqual(expect.objectContaining({
       createdAt: expect.any(String),      
-      fileName: translationParameters.filePath.split('/').pop(),
       files: expect.arrayContaining([
                 expect.objectContaining({
                       id: expect.any(String),
