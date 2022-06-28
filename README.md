@@ -6,13 +6,13 @@ Contains e2e tests written in Playwright and run by Playwright Test test runner
 
 ## Requirements
 
-Requires Playwright Test and Node.js 12 or higher
+Requires Playwright Test 1.23.0 and Node.js 14 or higher.
 
 ```
 
 # install PlayWright Test
 
-npm i -D @playwright/test
+npm i -D @playwright/test@1.23.0
 
 # install supported browsers
 
