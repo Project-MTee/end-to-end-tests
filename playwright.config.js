@@ -12,7 +12,7 @@ const config = {
   expect: {
 		timeout: 5000,
 		toMatchSnapshot: {
-		  	threshold: 0.3,
+		  	threshold: 0.7,
 	  }
 	},
   use: {
