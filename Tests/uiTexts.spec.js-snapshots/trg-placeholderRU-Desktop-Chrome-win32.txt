@@ -1,1 +1,1 @@
-Machine translation allows to understand the meaning of a source text, but cannot substitute a human translation.
+Машинный перевод позволяет понять смысл исходного текста, но не может заменить перевод, выполненный человеком.
