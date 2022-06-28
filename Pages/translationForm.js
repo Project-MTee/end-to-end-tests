@@ -113,10 +113,10 @@ async checkTranslationResponse(response, translationParameters)
 
 //check the request has the expected structure and values
 async checkTranslationRequest(request, expectedSrcText, translationParameters)
-{      
+{   
   let data = JSON.parse(await request.postData()); 
   expect(data).toEqual(expect.objectContaining({
-      domain:  expect.toBe(translationParameters.domainToSet),
+      domain:  translationParameters.domainToSet,
       srcLang: expect.stringMatching(translationParameters.srcLangCode),
       trgLang: expect.stringMatching(translationParameters.trgLangCode),
       text:
@@ -171,7 +171,7 @@ async checkCopiedText(expectedText)
     await this.srcInputWrapper.click({timeout:4000, force:true});  
     await this.page.keyboard.press('Control+v');    
     let txt=await this.srcTextInput.inputValue({timeout:4000}); 
-    expect(txt).toBe(expectedText);
+    expect(txt).toEqual(expectedText);
 }
 
 //click the translate field X button, check if the expected placeholders are visible and the buttons are hidden

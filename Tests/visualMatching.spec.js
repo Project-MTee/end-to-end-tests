@@ -1,5 +1,5 @@
-const { test } = require('@playwright/test');
 const { expect } = require('@playwright/test');
+const { test } = require('./baseTest');
 
 //pages
 const { TranslatePage } = require('../Pages/translatePage');
