@@ -22,7 +22,7 @@ exports.TranslatePage = class TranslatePage {
       this.page.waitForResponse(response => response.url().includes('css') && response.status() === 200),
 	  	this.page.goto(this.url)       
 	]);   
-  await expect(this.page).toHaveURL(this.url);
+  await expect(this.page, 'Page should have expected urlafter navigating to baseurl').toHaveURL(this.url);
  }
   
 }

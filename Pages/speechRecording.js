@@ -38,7 +38,7 @@ async waitForSpeechRecognition(translationParameters) {
 async checkSpeechResponse(response, translationParameters)
 {   
   let responseData = await response.json();    
-  expect(responseData).toEqual(expect.objectContaining({
+  expect(responseData, 'Speech api should return response that matches the expected schema and translation language set in browser').toEqual(expect.objectContaining({
           job_id: expect.any(String),         
           created_at: expect.any(String), 
           updated_at: expect.any(String),
@@ -52,13 +52,13 @@ async checkSpeechResponse(response, translationParameters)
 async startRecording()
 {
   await this.recordButton.click({timeout:3000});
-  await expect(this.timer).toBeVisible({timeout:1500}); 
+  await expect(this.timer, 'Timer should be visible after starting recording').toBeVisible({timeout:1500}); 
 }
 
 async stopRecording()
 {
   await this.stopButton.click({timeout:3000}); 
-  await expect(this.stopButton).toBeDisabled({timeout:1500});
+  await expect(this.stopButton, 'Stop button should be disabled after stoping recording.').toBeDisabled({timeout:1500});
 }
 
 async cancelRecording()
@@ -68,35 +68,35 @@ async cancelRecording()
 
 async checkDisplayedTimer(expectedTimeString)
 {
- await expect(this.timer).toContainText(expectedTimeString, {timeout:2500});
+ await expect(this.timer, 'Recording timer should contain the expected time').toContainText(expectedTimeString, {timeout:2500});
 }
 
 async checkRecorderInDefaultState()
 {
-  await expect(this.timer).toBeHidden({timeout:3500});
-  await expect(this.message).toBeHidden({timeout:3500});
-  await expect(this.cancelButton).toBeHidden({timeout:3500}); 
+  await expect(this.timer, 'Recording timer should be hidden if the form is in default state').toBeHidden({timeout:3500});
+  await expect(this.message, 'Recording message should be hidden if the form is in default state').toBeHidden({timeout:3500});
+  await expect(this.cancelButton, 'Recording Cancel button should be hidden if the form is in default state').toBeHidden({timeout:3500}); 
 }
 
 async checkRecordingMessage(messageText)
 {
-  await expect(this.message).toBeVisible({timeout:2000});
-  await expect(this.message).toContainText(messageText,{timeout:2000});   
+  await expect(this.message, 'Recording message should be visible').toBeVisible({timeout:2000});
+  await expect(this.message, 'Recording message should contain the expected text').toContainText(messageText,{timeout:2000});   
 }
 //@KEYBOARD
 
 async startRecordingWithKeyboard()
 {
   await this.recordButton.focus({timeout:3000});
-  await expect(this.recordButton).toBeFocused();
+  await expect(this.recordButton, 'Record button should be focused after focusing with keyboard').toBeFocused();
   await this.page.keyboard.press('Enter');
-  await expect(this.timer).toBeVisible({timeout:1500}); 
+  await expect(this.timer, 'Recording timer should be visible after starting recording').toBeVisible({timeout:1500}); 
 }
 
 async cancelRecordingWithKeyboard()
 {
   await this.cancelButton.focus({timeout:3000});
-  await expect(this.cancelButton).toBeFocused();
+  await expect(this.cancelButton, 'Recording Cancel button should be focused after focusing with keyboard.').toBeFocused();
   await this.page.keyboard.press('Enter'); 
 }
 

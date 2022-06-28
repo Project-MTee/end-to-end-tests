@@ -41,7 +41,7 @@ test.describe('speech translate @speech:', () => {
     await translatePage.speechRecording.stopRecording();
     let response = await translatePage.speechRecording.waitForSpeechRecognition(translationParameters);
     let transcription = (await response.json()).transcription;
-    expect(transcription).toContain('Sa oled liiga naljakas?');
+    await expect(transcription, 'Transcription should contain the expected text').toContain('Sa oled liiga naljakas?');
     let translationResponse = await translatePage.translationForm.waitForMTResponse(transcription, translationParameters.textTranslationTimeout);
     await translatePage.translationForm.checkSrcInputFieldText(transcription);
   });
@@ -56,16 +56,16 @@ test.describe('speech translate @speech:', () => {
     await translatePage.translationForm.checkTranslationFormInDefaultState();
   });
 
-  test("displays record button only for ET lang @smoke", async ({ page, baseURL }) => {
+  test.only("displays record button only for ET lang @smoke", async ({ page, baseURL }) => {
     translatePage = new TranslatePage(page);
     await translatePage.mtLanguageSelector.selectLanguageDirection('Estonian', 'English');
-    expect(translatePage.speechRecording.recordButton).toBeVisible({ timeout: 2000 });
+    await expect(translatePage.speechRecording.recordButton, 'Record button should be visible for Estonian-English').toBeVisible({ timeout: 2000 });
     await translatePage.mtLanguageSelector.selectLanguageDirection('English', 'Estonian');
-    expect(translatePage.speechRecording.recordButton).toBeHidden({ timeout: 2000 });
+    await expect(translatePage.speechRecording.recordButton, 'Record button should be hidden for English-Estonian').toBeHidden({ timeout: 2000 });
     await translatePage.mtLanguageSelector.selectLanguageDirection('Russian', 'Estonian');
-    expect(translatePage.speechRecording.recordButton).toBeHidden({ timeout: 2000 });
+    await expect(translatePage.speechRecording.recordButton, 'Record button should be hidden for Russian-Estonian').toBeHidden({ timeout: 2000 });
     await translatePage.mtLanguageSelector.selectLanguageDirection('German', 'Estonian');
-    expect(translatePage.speechRecording.recordButton).toBeHidden({ timeout: 2000 });
+    await expect(translatePage.speechRecording.recordButton,'Record button should be hidden for German-Estonian').toBeHidden({ timeout: 2000 });
   });
 
   test("displays recording time", async ({ page, baseURL }) => {

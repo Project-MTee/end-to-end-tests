@@ -112,7 +112,7 @@ test.describe('web translate @web:', () => {
     let page2 = await translatePage.translationForm.enterUrlClickToOpenWebtranslate(translationParameters.url);
     webTranslatePage = new WebTranslatePage(page2);
     await webTranslatePage.checkTranslationBarInDefaultState();
-    await expect(webTranslatePage.embeddedPageBody).toContainText('Proxy exceptions: Bad address');
+    await expect(webTranslatePage.embeddedPageBody, 'Error should be displayed if bad address entered').toContainText('Proxy exceptions: Bad address');
   });
 
   test("detects and sets domain @smoke", async ({ page, baseURL }) => {

@@ -36,11 +36,11 @@ exports.WebTranslatePage = class WebTranslatePage {
   }
 
   async checkFormInReadyState(url) {
-    await expect(this.addressInput).not.toBeEmpty({ timeout: 10000 });
-    await expect(this.progressBar).toBeHidden({ timeout: 20000 });
-    await expect(this.translateButton).toBeVisible({ timeout: 10000 });
-    await expect(this.translateButton).toBeEnabled({ timeout: 10000 });
-    await expect(this.embeddedPageBody).toBeVisible({ timeout: 20000 });
+    await expect(this.addressInput, 'Webtranslate form should contain the entered url once the page is loaded').not.toBeEmpty({ timeout: 10000 });
+    await expect(this.progressBar, 'Webtranslate form should have the progress bar hidden once the page is loaded').toBeHidden({ timeout: 20000 });
+    await expect(this.translateButton, 'Webtranslate form should have the translate button visible once the page is loaded').toBeVisible({ timeout: 10000 });
+    await expect(this.translateButton, 'Webtranslate form should have the translate button enabled once the page is loaded').toBeEnabled({ timeout: 10000 });
+    await expect(this.embeddedPageBody, 'Webtranslate should have the embedded page visible once the page is loaded').toBeVisible({ timeout: 20000 });
     try {
       let innerTextArray = await this.embeddedPageBody.innerText();
       expect(innerTextArray.length).toBeGreaterThan(100);
@@ -115,7 +115,7 @@ exports.WebTranslatePage = class WebTranslatePage {
     translationResponses.forEach(response => {
       response.translations.forEach(element => {
         let translationStr = element.translation.replace('&amp;', '&').replace('&', '&amp;') //replace & to match innerhtml if not &amp already
-        expect(translationsInPage).toContain(translationStr)
+        expect(translationsInPage, 'Translations displayed on page should contain the one received from API. The translation could be hidden or formatting might differ in rare cases.').toContain(translationStr)
       })
     })
   }
@@ -134,9 +134,9 @@ exports.WebTranslatePage = class WebTranslatePage {
   }
 
   async checkTranslationBarInDefaultState() {
-    await expect(this.loadButton).toBeVisible({ timeout: 2000 });
-    await expect(this.backButton).toBeVisible({ timeout: 2000 });
-    await expect(this.addressInput).toBeVisible({ timeout: 2000 });
+    await expect(this.loadButton, 'Webtranslate bar should have the Load button visible in default state.').toBeVisible({ timeout: 2000 });
+    await expect(this.backButton, 'Webtranslate bar should have the Back button visible in default state.').toBeVisible({ timeout: 2000 });
+    await expect(this.addressInput, 'Webtranslate bar should have the address input field visible in default state.').toBeVisible({ timeout: 2000 });
   }
 
   async translateWebsite(translationParameters, checkTagsInTranslation = true) {
@@ -156,15 +156,15 @@ exports.WebTranslatePage = class WebTranslatePage {
     })
     
     await this.translateButton.click({ timeout: 5000 });
-    await expect(this.cancelButton).toBeVisible({ timeout: 4000 });
-    await expect(this.progressBar).toBeVisible({ timeout: 3000 });
+    await expect(this.cancelButton ,'Cancel button should appear when translating a website.').toBeVisible({ timeout: 4000 });
+    await expect(this.progressBar, 'Progress bar should appear when translating website.').toBeVisible({ timeout: 3000 });
     try {
       await expect(this.restoreButton).toBeVisible({ timeout: translationParameters.webTranslationTimeout });
     }
     catch (e) {
       throw new Error(`Translation took too much time or the Restore button didnt become visible in ${translationParameters.webTranslationTimeout} sec. \nEx: ` + e);
     }
-    await expect(this.progressBar).toBeHidden({ timeout: 2000 });
+    await expect(this.progressBar, 'Progress bar should be hidden once the translation is done').toBeHidden({ timeout: 2000 });
     return translationResponses;
   }
 
@@ -197,7 +197,7 @@ exports.WebTranslatePage = class WebTranslatePage {
       //remove spaces before comparing, because webpage Restore normalizes whitespaces
       before[i] = before[i].replace(/\s\s+/g, ' ');
       after[i] = after[i].replace(/\s\s+/g, ' ');
-      expect(before[i]).toEqual(after[i]);
+      expect(before[i], 'Website content should match the original after clicking Restore for a translated page. (Remove spaces before comparing, because webpage Restore normalizes whitespaces. Might fail because of other normalization differences for some content.)').toEqual(after[i]);
     }
   }
 
@@ -208,12 +208,12 @@ exports.WebTranslatePage = class WebTranslatePage {
     let countTranslateNo = await this.embeddedPageTranslateNoLocator.count();
     if (countNoTranslate > 0) {
       for (let i = 0; i < countNoTranslate; i++) {
-        expect(this.embeddedPageNoTranslate.nth(i)).not.toHaveClass('letsmt-translation');
+        expect(this.embeddedPageNoTranslate.nth(i), 'Content marked with class=notranslate should not be translated. Translated page had this content marked with translation class.').not.toHaveClass('letsmt-translation');
       }
     }
     if (countTranslateNo > 0) {
       for (let i = 0; i < countTranslateNo; i++) {
-        expect(this.embeddedPageTranslateNoLocator.nth(i)).not.toHaveClass('letsmt-translation');
+        expect(this.embeddedPageTranslateNoLocator.nth(i), 'Content marked with translate=no attribute should not be translated. Translated page had this content marked with translation class.').not.toHaveClass('letsmt-translation');
       }
     }
   }

@@ -10,7 +10,7 @@ exports.Footer = class Footer {
 
   async openDataProtection() {
     await this.dataProtectionLink.click({timeout:3000});
-    await expect(this.page).toHaveURL(/.*data-protection-conditions/);
+    await expect(this.page, 'Data protection page should be opened when clicking the link in the footer').toHaveURL(/.*data-protection-conditions/);
   }
 
 }

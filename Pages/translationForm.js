@@ -60,7 +60,7 @@ exports.TranslationForm = class TranslationForm {
         ])
       await newPage.waitForLoadState();	
       let urlToExpect=encodeURIComponent(url).replace("%3A", ":"); //colon isn't urlencoded 
-      await expect(newPage).toHaveURL('web-translate\?url='+urlToExpect); 
+      await expect(newPage, 'Webtranslate should open in new page with url thatwas entered into text translation form').toHaveURL('web-translate\?url='+urlToExpect); 
     return newPage;
   }
 
@@ -102,7 +102,7 @@ async checkTranslationResponse(response, translationParameters)
       let expectedDomain = translationParameters.domainToExpect;     
       let responseData = await response.json();      
       //expect response containing domain and translations array  
-      expect(responseData).toEqual(expect.objectContaining({
+      expect(responseData, 'Translation api response should contain the expected domain and translations').toEqual(expect.objectContaining({
       domain: expect.stringMatching(expectedDomain),
       translations:
       expect.arrayContaining([
@@ -115,7 +115,7 @@ async checkTranslationResponse(response, translationParameters)
 async checkTranslationRequest(request, expectedSrcText, translationParameters)
 {   
   let data = JSON.parse(await request.postData()); 
-  expect(data).toEqual(expect.objectContaining({
+  expect(data, 'Translationapi request made by browser should have the expected domain, language direction and text').toEqual(expect.objectContaining({
       domain:  translationParameters.domainToSet,
       srcLang: expect.stringMatching(translationParameters.srcLangCode),
       trgLang: expect.stringMatching(translationParameters.trgLangCode),
@@ -129,19 +129,19 @@ async checkTranslationRequest(request, expectedSrcText, translationParameters)
 //check the displayed translation
 async checkDisplayedTranslation(expectedTranslations)
 {   
-    expect(this.trgHighlightParagraph).toHaveCount(expectedTranslations.length, {timeout: 3000}); //expect UI to have correct number of paragraphs
+    expect(this.trgHighlightParagraph,'UI should display all the received translation responses. Count should match.').toHaveCount(expectedTranslations.length, {timeout: 3000}); //expect UI to have correct number of paragraphs
     //check displayed translation paragraph by paragraph. Trim 
     let displayedTranslations=[];
     for(let i=0; i<expectedTranslations.length;i++)
     { 
       if(expectedTranslations[i]!='')
       { 
-        await expect(this.trgHighlightParagraph.nth(i)).not.toBeEmpty();    
+        await expect(this.trgHighlightParagraph.nth(i), 'Displayed paragraph should not be empty. Should contain the received translation: '+expectedTranslations[i]).not.toBeEmpty();    
       }  
         let innerText= (await this.trgHighlightParagraph.nth(i).innerText()); 
         displayedTranslations.push(innerText.trim());       
     }     
-  expect(displayedTranslations).toEqual(expect.arrayContaining(expectedTranslations));
+  expect(displayedTranslations, 'Displayed translations should match the translations received from API.').toEqual(expect.arrayContaining(expectedTranslations));
 }
 
 //check the displayed translations have the expected css alignment
@@ -149,7 +149,7 @@ async checkParagraphStyle()
 {
     for(let i=0; i<this.trgHighlightParagraph.length;i++)
     {      
-    await expect(this.trgHighlightParagraph.nth(i)).toHaveCSS('text-align', 'start'); //check the computed style of paragraph
+    await expect(this.trgHighlightParagraph.nth(i), 'Displayed translation should have the expected css style.').toHaveCSS('text-align', 'start'); //check the computed style of paragraph
     } 
 }
 
@@ -158,7 +158,7 @@ async checkParagraphStyle()
 async copyTranslation()
 {   
   await this.copyButton.click({timeout:4000});
-  await expect(this.successMessage).toBeVisible({timeout:3000});   
+  await expect(this.successMessage, 'Copy translation message should be displayed.').toBeVisible({timeout:3000});   
   await this.checkDisplayedMessage('Translation copied');
   return this.trgHighlightParagraph.allInnerTexts(); 
 }
@@ -171,7 +171,7 @@ async checkCopiedText(expectedText)
     await this.srcInputWrapper.click({timeout:4000, force:true});  
     await this.page.keyboard.press('Control+v');    
     let txt=await this.srcTextInput.inputValue({timeout:4000}); 
-    expect(txt).toEqual(expectedText);
+    expect(txt, 'Copied text should match the expected. (Copied text is pasted into the translation source field for validation. If the values dont match check the pasted value.)').toEqual(expectedText);
 }
 
 //click the translate field X button, check if the expected placeholders are visible and the buttons are hidden
@@ -183,55 +183,55 @@ async clearTranslateFields()
 
 async checkTranslationFormInDefaultState()
 {
- await expect(this.srcPlaceholder).toBeVisible({timeout:2000});
- await expect(this.trgPlaceholder).toBeVisible({timeout:2000});
- await expect(this.copyButton).toBeHidden({timeout:2000});
- await expect(this.uploadButton).toBeVisible({timeout:2000});
- await expect(this.closeButton).toBeHidden({timeout:2000});
- await expect(this.translateButton).toBeEnabled({timeout:2000});
+ await expect(this.srcPlaceholder,'Translation form in default state should have the source field placeholder visible.').toBeVisible({timeout:2000});
+ await expect(this.trgPlaceholder,'Translation form in default state should have the target field placeholder visible.').toBeVisible({timeout:2000});
+ await expect(this.copyButton,'Translation form in default state should have the copy button hidden.').toBeHidden({timeout:2000});
+ await expect(this.uploadButton,'Translation form in default state should have the upload button visible.').toBeVisible({timeout:2000});
+ await expect(this.closeButton,'Translation form in default state should have the close button hidden.').toBeHidden({timeout:2000});
+ await expect(this.translateButton,'Translation form in default state should have the translate button enabled.').toBeEnabled({timeout:2000});
 }
 
 // check if the displayed error has the expected text and appearance
 async checkDisplayedError(errorText)
 {      
-    expect(this.errorMessage).toBeVisible({timeout:3000});
-    await expect(this.errorMessage).toContainText(errorText);
+    expect(this.errorMessage, 'Error message should be visible.').toBeVisible({timeout:3000});
+    await expect(this.errorMessage,'Displayed error text doesnt match expected').toContainText(errorText);
     //check the computed style of the error	(light red background, red border)
-    await expect(this.errorMessage).toHaveCSS('background-color', 'rgb(253, 243, 243)');
-    await expect(this.errorMessage).toHaveCSS('border-top-color', 'rgb(229, 36, 46)');
-    await expect(this.errorMessage).toHaveCSS('border-top-width', '2px');
-    await expect(this.errorMessage).toHaveCSS('color', 'rgb(148, 0, 7)');  
-    await expect(this.errorMessage).toHaveCSS('line-height', '20px'); 
+    await expect(this.errorMessage, 'Displayed error message should have the expected background color.').toHaveCSS('background-color', 'rgb(253, 243, 243)');
+    await expect(this.errorMessage,'Displayed error message should have the expected top border color.').toHaveCSS('border-top-color', 'rgb(229, 36, 46)');
+    await expect(this.errorMessage,'Displayed error message should have the expected top border width.').toHaveCSS('border-top-width', '2px');
+    await expect(this.errorMessage, 'Displayed error message should have the expected text color.').toHaveCSS('color', 'rgb(148, 0, 7)');  
+    await expect(this.errorMessage,'Displayed error message should have the expected line height.').toHaveCSS('line-height', '20px'); 
 }
 
   async checkErrorEmailAddress(email)
   {
-    await expect(this.errorMessage).toHaveAttribute('href', 'mailto:'+email);
+    await expect(this.errorMessage, 'Email in error message should contain the expected address').toHaveAttribute('href', 'mailto:'+email);
   }
 
 // check if the displayed warning has the expected text and appearance
   async checkDisplayedWarning(warningText)
   {	
-    await expect(this.warningMessage).toBeVisible();  
+    await expect(this.warningMessage,'Warning message should be visible.').toBeVisible();  
     await expect(this.warningMessage).toContainText(warningText); 
     //check the computed style of the warning (light orange background, orange border)
-    await expect(this.warningMessage).toHaveCSS('background-color', 'rgb(255, 245, 204)');
-    await expect(this.warningMessage).toHaveCSS('border-top-color', 'rgb(255, 140, 0)');
-    await expect(this.warningMessage).toHaveCSS('border-top-width', '2px');  
-    await expect(this.warningMessage).toHaveCSS('color', 'rgb(90, 102, 114)');  
-    await expect(this.warningMessage).toHaveCSS('line-height', '20px');  
+    await expect(this.warningMessage,'Displayed warning message should have the expected background color.' ).toHaveCSS('background-color', 'rgb(255, 245, 204)');
+    await expect(this.warningMessage,'Displayed warning message should have the expected top border color.' ).toHaveCSS('border-top-color', 'rgb(255, 140, 0)');
+    await expect(this.warningMessage, 'Displayed warning message should have the expected top border width.').toHaveCSS('border-top-width', '2px');  
+    await expect(this.warningMessage, 'Displayed warning message should have the expected top border width.').toHaveCSS('color', 'rgb(90, 102, 114)');  
+    await expect(this.warningMessage,'Displayed warning message should have the expected line height.' ).toHaveCSS('line-height', '20px');  
   }
 // check if the displayed success message has the expected text and appearance
   async checkDisplayedMessage(successText)
   {	
-    expect(this.successMessage).toBeVisible;
+    expect(this.successMessage,'Success message should be visible.').toBeVisible;
     await expect(this.successMessage).toContainText(successText); 
     //check the computed style of the warning (light green background, green border)
-    await expect(this.successMessage).toHaveCSS('background-color', 'rgb(242, 255, 251)');
-    await expect(this.successMessage).toHaveCSS('border-top-color', 'rgb(37, 158, 118)');
-    await expect(this.successMessage).toHaveCSS('border-top-width', '2px');  
-    await expect(this.successMessage).toHaveCSS('color', 'rgb(0, 97, 65)');  
-    await expect(this.successMessage).toHaveCSS('line-height', '20px');  
+    await expect(this.successMessage,'Displayed success message should have the expected background color.').toHaveCSS('background-color', 'rgb(242, 255, 251)');
+    await expect(this.successMessage,'Displayed success message should have the expected top border color.' ).toHaveCSS('border-top-color', 'rgb(37, 158, 118)');
+    await expect(this.successMessage, 'Displayed success message should have the expected top border width.').toHaveCSS('border-top-width', '2px');  
+    await expect(this.successMessage, 'Displayed success message should have the expected top border width.').toHaveCSS('color', 'rgb(0, 97, 65)');  
+    await expect(this.successMessage,'Displayed success message should have the expected line height.' ).toHaveCSS('line-height', '20px');  
   }
 
 //Document translation
@@ -241,13 +241,13 @@ async uploadDocument(filePath, displayError=false)
 		await this.fileUpload.setInputFiles(filePath);
     if(!displayError)
     { 
-      await expect(this.errorMessage).toBeHidden();
-      await expect(this.docPreview).toBeVisible();
-      await expect(this.docPreview).toHaveClass('no-preview type-'+(filePath.split('.').pop()).toLowerCase());
+      await expect(this.errorMessage, 'Error messageshould notbe displayed after uploading files').toBeHidden();
+      await expect(this.docPreview, 'File icon with document format type should be displayed after uploading file').toBeVisible();
+      await expect(this.docPreview, 'File icon with document format type should be displayed after uploading file').toHaveClass('no-preview type-'+(filePath.split('.').pop()).toLowerCase());
     }
     else
     { 
-      await expect(this.errorMessage).toBeVisible();
+      await expect(this.errorMessage, 'Error message should be displayed after uploading file.').toBeVisible();
     }   
 }
 
@@ -258,11 +258,11 @@ async startDocumentTranslation(translationParameters,displayError=false)
  
     if(!displayError)
     { 
-      await expect(this.errorMessage).toBeHidden();
+      await expect(this.errorMessage, 'Error message should not be displayed after starting file translation.').toBeHidden();
     }
     else
     { 
-      await expect(this.errorMessage).toBeVisible();
+      await expect(this.errorMessage,'Error message should be displayed after starting file translation.').toBeVisible();
     }
 }
 
@@ -289,7 +289,7 @@ async checkDocumentTranslationResponse(response, translationParameters)
   let responseData = await response.json();    
   if(responseData.domain!=null)
     {
-     await expect(responseData).toEqual(expect.objectContaining({
+     await expect(responseData,'File translation response should match the expected schema and contain translation values set in browser.').toEqual(expect.objectContaining({
           createdAt: expect.any(String),
           domain: expect.stringMatching(translationParameters.domainToExpect),         
           files: expect.arrayContaining([
@@ -311,7 +311,7 @@ async checkDocumentTranslationResponse(response, translationParameters)
   }        
   else //auto domain detection starts returning the set domain after several responses, dont compare if still returning null
   {
-   await expect(responseData).toEqual(expect.objectContaining({
+   await expect(responseData, 'File translation response should match the expected schema and contain translation values set in browser.').toEqual(expect.objectContaining({
       createdAt: expect.any(String),      
       files: expect.arrayContaining([
                 expect.objectContaining({
@@ -381,7 +381,7 @@ async checkGrammarRequest(response)
 {   
   let request = await response.request();
   let requestData = JSON.parse(await request.postData());   
-  await expect(requestData).toEqual(expect.objectContaining({
+  await expect(requestData, 'Grammar api request should match the expected schema and contain translation values set in browser.').toEqual(expect.objectContaining({
       text: expect.any(String),
       language: expect.any(String)
  }))
@@ -389,7 +389,7 @@ async checkGrammarRequest(response)
 
 async checkGrammarResponse(responseData)
 {   
- await expect(responseData).toEqual(expect.objectContaining({
+ await expect(responseData,'Grammar api response should match the expected schema.').toEqual(expect.objectContaining({
     corrections:
         expect.arrayContaining([
               expect.objectContaining({
@@ -422,8 +422,8 @@ async checkUnderlinedPhrases(gramCheckResponses, translationTime)
     let phrases = responseData.corrections.map(function (x) { return x.span.value })
     invalidPhrasesFromAPI.push(...phrases);  
   }
-  await expect(this.invalidPhrase).toHaveCount(invalidPhrasesFromAPI.length, {timeout: translationTime});  
-  await expect(this.invalidPhrase).toHaveText(invalidPhrasesFromAPI);
+  await expect(this.invalidPhrase, 'Displayed invalid phrase count should be the same as returned from grammar API. Check the underlined words if count doesnt match.').toHaveCount(invalidPhrasesFromAPI.length, {timeout: translationTime});  
+  await expect(this.invalidPhrase, 'Displayed invalid phrase text should be the same as returned from grammar API.  Check the underlined words if text doesnt match.').toHaveText(invalidPhrasesFromAPI);
 
   //iterate over each invalid phrase and check the computed style is correct
   for(let i=0; i<invalidPhrasesFromAPI.length;i++)
@@ -435,11 +435,11 @@ async checkUnderlinedPhrases(gramCheckResponses, translationTime)
 
 async checkUnderlineStyle(invalidPhrase)
 {
-  await expect(invalidPhrase).toHaveCSS('cursor', 'text');
-  await expect(invalidPhrase).toHaveCSS('text-decoration-line', 'underline');
-  await expect(invalidPhrase).toHaveCSS('text-decoration-style', 'wavy');
-  await expect(invalidPhrase).toHaveCSS('text-decoration-thickness', 'auto');
-  await expect(invalidPhrase).toHaveCSS('text-decoration-color', 'rgb(255, 0, 0)');
+  await expect(invalidPhrase, 'Underlined words should have "text" cursor').toHaveCSS('cursor', 'text');
+  await expect(invalidPhrase, 'Underlined words should have text decoration style underline').toHaveCSS('text-decoration-line', 'underline');
+  await expect(invalidPhrase, 'Underlined words should have wavy decorationline').toHaveCSS('text-decoration-style', 'wavy');
+  await expect(invalidPhrase, 'Underlined words should have line thickness set to auto').toHaveCSS('text-decoration-thickness', 'auto');
+  await expect(invalidPhrase, 'Underlined words should have red line color').toHaveCSS('text-decoration-color', 'rgb(255, 0, 0)');
 }
 
 async selectGrammarSuggestion(invalidPhraseText, correctionText, originalSentence)
@@ -449,15 +449,15 @@ async selectGrammarSuggestion(invalidPhraseText, correctionText, originalSentenc
   let correctionButtonLocator = this.page.locator('.grammar-check-menu .mat-button-wrapper:has-text(" '+correctionText+' ")'); 
   await this.page.waitForTimeout(1500);
   await invalidPhraseLocator.click({force:true, timeout:3000});
-  await expect(this.suggestionPanel).toBeVisible();
+  await expect(this.suggestionPanel, 'Grammar suggestion popup should be visible after clicking on an underlined phrase').toBeVisible();
  //select the correction and wait for new grammar response
   await Promise.all([   
   await correctionButtonLocator.click({timeout:3000}),
   this.waitForGrammarResponse(originalSentence.replace(invalidPhraseText,correctionText),30000)
   ])
-  await expect(this.suggestionPanel).toBeHidden({timeout:3000});
-  await expect(this.errorMessage).toBeHidden({timeout:3000});
-  await expect(this.suggestionPanel).toBeHidden({timeout:3000});
+  await expect(this.suggestionPanel, 'Grammar suggestion popup should get hidden after selecting correction').toBeHidden({timeout:3000});
+  await expect(this.errorMessage, 'Error message should notbe displayed after selecting grammar correction').toBeHidden({timeout:3000});
+  await expect(this.suggestionPanel, 'Grammar suggestion popup should get hidden after selecting correction').toBeHidden({timeout:3000});
   //check the src text field contains the corretion and doesnt contain the invalid phrase
   await this.checkSrcInputFieldText(correctionText, invalidPhraseText);
 }
@@ -465,15 +465,15 @@ async selectGrammarSuggestion(invalidPhraseText, correctionText, originalSentenc
 async checkSrcInputFieldText(textToContain, textToNotContain)
 {
   let inputFieldValue = await this.srcTextInput.inputValue()
-  if(textToContain!=null) await expect(inputFieldValue).toEqual(expect.stringContaining(textToContain));
-  if(textToNotContain!=null) await expect(inputFieldValue).toEqual(expect.not.stringContaining(textToNotContain));
+  if(textToContain!=null) await expect(inputFieldValue, 'Source text input field should contain the expected text.').toEqual(expect.stringContaining(textToContain));
+  if(textToNotContain!=null) await expect(inputFieldValue, 'Source text input field should not contain the expected text.').toEqual(expect.not.stringContaining(textToNotContain));
 }
 
 //KEYBOARD 
 async translateTextWithKeyboard(srcTextArray, translationParameters)
 {	
   await this.translateButton.focus();
-  await expect(this.translateButton).toBeFocused();
+  await expect(this.translateButton, 'Translate button should be focused after setting keyboard focus on it').toBeFocused();
   await this.page.keyboard.press('Enter');
   // wait for translations, check response status, check request data
   let translations = await Promise.all(srcTextArray.map(async (txt) => {
@@ -493,35 +493,35 @@ async uploadDocumentWithKeyboard(filePath, displayError=false)
   await fileChooser.setFiles(filePath);
   if(!displayError)
     { 
-      await expect(this.errorMessage).toBeHidden();
-      await expect(this.docPreview).toBeVisible();
-      await expect(this.docPreview).toHaveClass('no-preview type-'+filePath.split('.').pop());
+      await expect(this.errorMessage, 'Error message should notbe displayed after uploading files').toBeHidden();
+      await expect(this.docPreview, 'File icon with document format type should be displayed after uploading file').toBeVisible();
+      await expect(this.docPreview,'File icon with document format type should be displayed after uploading file').toHaveClass('no-preview type-'+filePath.split('.').pop());
     }
     else
     { 
-      await expect(this.errorMessage).toBeVisible();
+      await expect(this.errorMessage,'Error message should be displayed after uploading file.').toBeVisible();
     } 
 }
 
 async startDocumentTranslationWithKeyboard(displayError=false)
 {	
     await this.translateButton.focus();
-    await expect(this.translateButton).toBeFocused();
+    await expect(this.translateButton, 'Translate button should be focused after setting keyboard focus on it').toBeFocused();
     await  this.page.keyboard.press('Enter');
     if(!displayError)
     { 
-      await expect(this.errorMessage).toBeHidden();
+      await expect(this.errorMessage, 'Error message should not be displayed after starting translation. Check the console log in test trace.').toBeHidden();
     }
     else
     { 
-      await expect(this.errorMessage).toBeVisible();
+      await expect(this.errorMessage, 'Error message should be displayed after starting translation.').toBeVisible();
     }   
 }
 
 async downloadDocumentWithKeyboard()
 {	 
   await this.downloadButton.focus();
-  await expect(this.downloadButton).toBeFocused({timeout:3000});  
+  await expect(this.downloadButton, 'Download button should be focused after setting keyboard focus on it').toBeFocused({timeout:3000});  
 	let [ download ] = await Promise.all([
 	this.page.waitForEvent('download'),
   this.page.keyboard.press('Enter')
@@ -534,7 +534,7 @@ async downloadDocumentWithKeyboard()
 async cancelDocumentTranslationWithKeyboard()
 {  
   await this.cancelButton.focus();
-  await expect(this.cancelButton).toBeFocused({timeout:3000});
+  await expect(this.cancelButton, 'Cancel button should be focused after setting keyboard focus on it.').toBeFocused({timeout:3000});
   await this.page.keyboard.press('Enter');
   await this.checkTranslationFormInDefaultState();
 }
@@ -542,7 +542,7 @@ async cancelDocumentTranslationWithKeyboard()
 async clearTranslateFieldsWithKeyboard()
 {  
   await this.closeButton.focus();
-  await expect(this.closeButton).toBeFocused({timeout:3000});
+  await expect(this.closeButton,'Close button should be focused after setting keyboard focus on it.').toBeFocused({timeout:3000});
   await this.page.keyboard.press('Enter');
   await this.checkTranslationFormInDefaultState();
 }
@@ -550,9 +550,9 @@ async clearTranslateFieldsWithKeyboard()
 async copyTranslationWithKeyboard()
 {
   await this.copyButton.focus();
-  await expect(this.copyButton).toBeFocused({timeout:3000});
+  await expect(this.copyButton, 'Copy button should be focused after setting keyboard focus on it.').toBeFocused({timeout:3000});
   await this.page.keyboard.press('Enter');
-  await expect(this.successMessage).toBeVisible({timeout:3000});   
+  await expect(this.successMessage,'Copy sucess message should be displayed after clicking copy button').toBeVisible({timeout:3000});   
   await this.checkDisplayedMessage('Translation copied');
   return this.trgHighlightParagraph.allInnerTexts();
 }
@@ -560,8 +560,8 @@ async copyTranslationWithKeyboard()
 async closeDisplayedMessageWithKeyboard()
 {
   await this.closeMessageButton.focus();
-  await expect(this.closeMessageButton).toBeFocused({timeout:3000});
+  await expect(this.closeMessageButton,'Close button should be focused after setting keyboard focus on it.').toBeFocused({timeout:3000});
   await this.page.keyboard.press('Enter');
-  await expect(this.message).toBeHidden({timeout:3000});     
+  await expect(this.message, 'Message should be hidden after closing it with keyboard.').toBeHidden({timeout:3000});     
 }
 }

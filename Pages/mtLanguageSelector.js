@@ -42,37 +42,37 @@ constructor(page) {
 
   async checkActiveLanguages(srcLanguageToSet,trgLanguageToSet)
   {	
-    await expect(this.activeSrcLanguage).toContainText(srcLanguageToSet);
-    await expect(this.activeTrgLanguage).toContainText(trgLanguageToSet);    
+    await expect(this.activeSrcLanguage, 'Active source language should be '+srcLanguageToSet).toContainText(srcLanguageToSet);
+    await expect(this.activeTrgLanguage, 'Active target language should be '+trgLanguageToSet).toContainText(trgLanguageToSet);    
   }
 
   async selectSrcLang(srcLanguageToSet)
   { 
     await this.srcMenuTrigger.click({timeout:3000});
-    await expect(this.srcMenu).toBeVisible({timeout:3000});    
+    await expect(this.srcMenu, 'Source language menu should be opened after clicking the menu trigger').toBeVisible({timeout:3000});    
     await this.page.click('data-test-id=src-lang-menu >>text='+srcLanguageToSet,{timeout:3000});
-    await expect(this.srcMenu).toBeHidden({timeout:3000});  
+    await expect(this.srcMenu, 'Source language menu should be closed after selecting the language').toBeHidden({timeout:3000});  
   }
 
   async selectTrgLang(trgLanguageToSet)
   {
     await this.trgMenuTrigger.click({timeout:3000});
-    await expect(this.trgMenu).toBeVisible({timeout:3000});    
+    await expect(this.trgMenu, 'Target language menu should be opened after clicking the menu trigger').toBeVisible({timeout:3000});    
     await this.page.click('data-test-id=trg-lang-menu >>text='+trgLanguageToSet,{timeout:3000});
-    await expect(this.trgMenu).toBeHidden({timeout:3000});   
+    await expect(this.trgMenu, 'Target language menu should be closed after selecting the language').toBeHidden({timeout:3000});   
   }
  
   async selectDomain(domainName)
   {
     await this.domainMenuTrigger.click({timeout:3000});
-    await expect(this.domainMenu).toBeVisible({timeout:3000});    
+    await expect(this.domainMenu, 'Domain menu should be opened after clicking the menu trigger').toBeVisible({timeout:3000});    
     await this.page.click('data-test-id=tld-domain-list >>text='+domainName,{timeout:3000});
-    await expect(this.domainMenu).toBeHidden({timeout:3000});   
+    await expect(this.domainMenu, 'Domain menu should be closed after selecting the language').toBeHidden({timeout:3000});   
   }
 
   async checkActiveDomain(domain)
   {	     
-    await expect(this.domainMenuTrigger).toContainText(domain.charAt(0).toUpperCase());  
+    await expect(this.domainMenuTrigger,'Active domain language should be '+domain).toContainText(domain.charAt(0).toUpperCase());  
   }
 
 // @keyboard for accessibility checks 
@@ -95,16 +95,16 @@ async selectLanguageDirectionWithKeyboard(srcLanguageToSet, trgLanguageToSet)
       await this.selectTrgLangWithKeyboard(trgLanguageToSet);      
   } 
  //check active languages  
- await expect(this.activeSrcLanguage).toContainText(srcLanguageToSet);
- await expect(this.activeTrgLanguage).toContainText(trgLanguageToSet);  
+ await expect(this.activeSrcLanguage, 'Active source language should be '+srcLanguageToSet).toContainText(srcLanguageToSet);
+ await expect(this.activeTrgLanguage, 'Active target language should be '+trgLanguageToSet).toContainText(trgLanguageToSet);  
 }
 
   async openSrcMenuWithKeyboard()
   {     
     await this.activeSrcLanguage.focus();
-    await expect(this.activeSrcLanguage).toBeFocused();
+    await expect(this.activeSrcLanguage, 'Source language menu should be focused').toBeFocused();
     await  this.page.keyboard.press('Enter');
-    await expect(this.srcMenu).toBeVisible({timeout:3000});    
+    await expect(this.srcMenu, 'Source menu should be opened after pressing Enter when focused on menu').toBeVisible({timeout:3000});    
   }
 
   async openTrgMenuWithKeyboard()
@@ -113,7 +113,7 @@ async selectLanguageDirectionWithKeyboard(srcLanguageToSet, trgLanguageToSet)
     else  await this.activeTrgLanguage.focus();
 
     await this.page.keyboard.press('Enter');
-    await expect(this.trgMenu).toBeVisible({timeout:3000});   
+    await expect(this.trgMenu,'Target menu should be opened after pressing Enter when focused on menu').toBeVisible({timeout:3000});   
   }  
 
   async selectSrcLangWithKeyboard(srcLanguageToSet)
@@ -125,7 +125,7 @@ async selectLanguageDirectionWithKeyboard(srcLanguageToSet, trgLanguageToSet)
         await this.page.keyboard.press('ArrowDown');
         }
         await this.page.keyboard.press('Enter');         
-        await expect(this.srcMenu).toBeHidden({timeout:3000});     
+        await expect(this.srcMenu,'Source menu should be closed after selecting a language with Enter').toBeHidden({timeout:3000});     
   }
 
   async selectTrgLangWithKeyboard(trgLanguageToSet)
@@ -137,23 +137,23 @@ async selectLanguageDirectionWithKeyboard(srcLanguageToSet, trgLanguageToSet)
         await this.page.keyboard.press('ArrowDown');
         }
         await this.page.keyboard.press('Enter');         
-        await expect(this.srcMenu).toBeHidden({timeout:3000}); 
+        await expect(this.trgMenu, 'Target menu should be closed after selecting a language with Enter').toBeHidden({timeout:3000}); 
   }
 
   async selectDomainWithKeyboard(domainToSet)
   { 
     domainToSet = domainToSet[0].toUpperCase() + domainToSet.substring(1);
     await this.domainMenuTrigger.focus();  
-    await expect(this.domainMenuTrigger).toBeFocused();
+    await expect(this.domainMenuTrigger, 'Domain menu should be focused').toBeFocused();
     await this.page.keyboard.press('Enter');
-    await expect(this.domainMenu).toBeVisible({timeout:3000});  
+    await expect(this.domainMenu, 'Domain menu should be opened after pressing Enter when focused on menu').toBeVisible({timeout:3000});  
     let domains= await this.domainMenuOptions.allInnerTexts({timeout:5000});  
     for(let i=0;i<domains.indexOf(domainToSet);i++)
     {            
     await this.page.keyboard.press('ArrowDown');
     }
     await this.page.keyboard.press('Enter');         
-    await expect(this.domainMenu).toBeHidden({timeout:3000});     
+    await expect(this.domainMenu,'Domain menu should be closed after selecting a domain with Enter').toBeHidden({timeout:3000});     
   }
   
 }

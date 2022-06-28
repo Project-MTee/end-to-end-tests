@@ -19,31 +19,31 @@ exports.Header = class Header {
 
   async openAboutProject() {
     await this.aboutProjectLink.click({timeout:3000});
-    await expect(this.page).toHaveURL(/.*about/);
+    await expect(this.page, 'Should open the About page when clicking the link').toHaveURL(/.*about/);
   }
 
   async clickLogo(baseURL) {
     await this.logoImage.click({timeout:3000});
-    await expect(this.page).toHaveURL(baseURL);
+    await expect(this.page, 'Should open the baseUrl page when clicking the logo').toHaveURL(baseURL);
   }
 
   async openUILanguageMenu()
   {
-    await expect(this.currentLang).toBeVisible(); 
+    await expect(this.currentLang, 'UI language menu should be visible').toBeVisible(); 
     await this.uiMenuButton.click({timeout:3000});
-    await expect(this.uiLangMenu).toBeVisible();    
+    await expect(this.uiLangMenu, 'UI language menu should be opened when clicking it').toBeVisible();    
   }
 
   async changeUILanguage(languageCode) {   
     await this.openUILanguageMenu();
     await this.page.click('#mat-menu-panel-0 .mat-menu-item:has-text("'+languageCode+'")');
-    await expect(this.uiLangMenu).toBeHidden();    //check menu closed
-    await expect(this.currentLang).toHaveText(languageCode);  //check language set 
+    await expect(this.uiLangMenu, 'UI language menu should be closed after selecting a language').toBeHidden();    //check menu closed
+    await expect(this.currentLang, 'Current UI language should be set to the selected one').toHaveText(languageCode);  //check language set 
   }
 
   async checkAvailableUILanguages(languageCodes) {   
     await this.openUILanguageMenu();
-    await expect(this.uiLangMenuItem).toHaveText(languageCodes);   
+    await expect(this.uiLangMenuItem,'Opened UI language menu should have the expected languages.').toHaveText(languageCodes);   
   }
 
  async chageUILanguageWithKeyboard(languageCode) //(accessibility)
@@ -54,24 +54,24 @@ exports.Header = class Header {
   await this.page.keyboard.press('ArrowDown');
   }
   await this.page.keyboard.press('Enter');
-  await expect(this.uiLangMenu).toBeHidden();    //check menu closed
-  await expect(this.currentLang).toHaveText(languageCode); //check language set
+  await expect(this.uiLangMenu, 'UI language menu should be closed after selecting a language with Enter').toBeHidden();    //check menu closed
+  await expect(this.currentLang, 'Current UI language should be set to the selected one').toHaveText(languageCode); //check language set
  }
 
  async openUILanguageMenuWithKeyboard() //(accessibility)
  {
   await this.uiMenuButton.focus();
-  await expect(this.uiMenuButton).toBeFocused(); //check correct element focused
+  await expect(this.uiMenuButton, 'UI language mneu should be focused').toBeFocused(); //check correct element focused
   await this.page.keyboard.press('Enter');
-  await expect(this.uiLangMenu).toBeVisible();  //check menu opened
+  await expect(this.uiLangMenu, 'UI language menu should be opened when pressing Enter while focused on it ').toBeVisible();  //check menu opened
  }
 
  async openAboutProjectWithKeyboard() //(accessibility)
  {
   await this.aboutProjectLink.focus();
-  await expect(this.aboutProjectLink).toBeFocused(); //check correct element focused
+  await expect(this.aboutProjectLink, 'About project link should be focused').toBeFocused(); //check correct element focused
   await this.page.keyboard.press('Enter');
-  await expect(this.page).toHaveURL(/.*about/); //check correct url opened
+  await expect(this.page, 'About project page should be opened when presing Enter while focused on About link').toHaveURL(/.*about/); //check correct url opened
 }
 
 }
