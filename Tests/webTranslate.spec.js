@@ -118,7 +118,7 @@ test.describe('web translate @web:', () => {
   test("detects and sets domain @smoke", async ({ page, baseURL }) => {
     translationParameters.url = 'https://estonia.ee/';
     translationParameters.domainToSet = null,
-    translationParameters.domainToExpect = 'crisis',
+    translationParameters.domainToExpect = 'general',
     translatePage = new TranslatePage(page);
     await translatePage.mtLanguageSelector.selectLanguageDirection(translationParameters.srcLang, translationParameters.trgLang);
     let page2 = await translatePage.translationForm.enterUrlClickToOpenWebtranslate(translationParameters.url);
